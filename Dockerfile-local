@@ -1,0 +1,16 @@
+FROM golang:alpine AS builder
+ADD ./ /app
+RUN cd /app
+WORKDIR /app/cmd
+RUN go mod tidy
+RUN go build -o main .
+
+FROM alpine:3.19
+WORKDIR /app
+COPY --from=builder /app/main .
+ENV TZ=Asia/Jakarta
+RUN apk --no-cache add tzdata
+CMD ["/app/main"]
+
+
+
